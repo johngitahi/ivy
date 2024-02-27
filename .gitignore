@@ -1,0 +1,7 @@
+# build file
+datura
+
+# other c stuff
+*.o
+*.out
+*.s

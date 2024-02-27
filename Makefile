@@ -1,9 +1,12 @@
 SRC = src/main.c
+SRC += src/reader.c
 CFLAGS = -Wpedantic
 CFLAGS += -g
 
-program: $(SRC)
+datura: $(SRC)
 	gcc -o datura $(SRC) $(CFLAGS)
 
+install: datura
+	sudo cp datura /usr/local/bin
 clean:
 	rm -rf *.o datura
