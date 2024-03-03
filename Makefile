@@ -4,7 +4,7 @@ CFLAGS = -Wpedantic
 CFLAGS += -g
 
 datura: $(SRC)
-	gcc -o datura $(SRC) $(CFLAGS)
+	gcc -o build/datura $(SRC) $(CFLAGS)
 
 install: datura
 	sudo cp datura /usr/local/bin
