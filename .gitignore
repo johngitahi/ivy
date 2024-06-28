@@ -1,5 +1,8 @@
-# build file
-datura
+# build dir
+build/
+
+#emacs backups
+*~
 
 # other c stuff
 *.o

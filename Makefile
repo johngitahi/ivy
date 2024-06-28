@@ -1,12 +1,12 @@
 SRC = src/main.c
-SRC += src/reader.c
+SRC += src/utils.c
 CFLAGS = -Wpedantic
 CFLAGS += -g
 
-datura: $(SRC)
-	gcc -o build/datura $(SRC) $(CFLAGS)
+ivy: $(SRC)
+	gcc -o build/ivy $(SRC) $(CFLAGS)
 
-install: datura
-	sudo cp datura /usr/local/bin
+install: ivy
+	sudo cp build/ivy /usr/local/bin
 clean:
-	rm -rf *.o datura
+	rm -rf *.o ivy

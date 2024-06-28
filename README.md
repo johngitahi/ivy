@@ -1,7 +1,8 @@
-# Datura
+# Ivy
 An attempt to understand how a computer compiler works.
 
-this compiler written in c
+just `make ivy` to build and try it against the code in examples dir.
 
-## References
-[Wikipedia](en.wikipedia.org/wiki/Compiler)
+currently does not work well. no lexer, parser, scanner, so ...
+
+

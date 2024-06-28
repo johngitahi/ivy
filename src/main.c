@@ -1,70 +1,71 @@
 /*
-  This program written by John Gitahi. February 2024
+ * Ivy Compiler
+ * Copright (c) 2024 John Gitahi
+ * This code is licensed under the WFPL - https://wfpl.net/
  */
 
-#include "datura.h"
+#include "../include/ivy.h"
 
 int main(int argc, char* argv[]) {
-  sanity_checks(argc, argv); // checks file supplied for file extensions, etc
+  sanity_checks(argc, argv); // checks file sanity
 
-  char* file_contents = read_datura_file(argv[1]);
-  printf("%s", file_contents);
+  char* filename = null_checker(strdup(argv[1])); // use argv[1] for absolute file
+  char* last_dot = strrchr(filename, '.');
+  if (last_dot != NULL) *last_dot = '\0';
+
+  char* file_contents = read_file(argv[1]);
+
+  // assmebly template
+  static char* asm_template =
+    "section .text\n"
+    "\tglobal _start\t; program entry point\n\n"
+    "_start:\n"
+    "\tmov rax, 60\n"
+    "\tmov rdi, %d\n"
+    "\tsyscall\n";
+
+  char* asm_code = null_checker(malloc(strlen(asm_template) + 10));
+
+  // replace the format specifier with contents of the ivy file
+  char* value = strrchr(file_contents, ' ');
+  long yield_value = strtol(value + 1, NULL, 10);
+  sprintf(asm_code, asm_template, yield_value);
+
+  // generate the assembly filename
+  char* ivy_file_asm =  null_checker(malloc((strlen(filename)) + 5));
+  strcpy(ivy_file_asm, filename);
+  strcat(ivy_file_asm, ".asm");
+
+  // generate linked file name
+  char* ivy_linked_file = null_checker(malloc(strlen(filename) + 3));
+  strcpy(ivy_linked_file, filename);  
+  strcat(ivy_linked_file, ".o");
+
+  // open file to write to it the asm generated
+  write_file(asm_code, ivy_file_asm);
+
+  // generate executable(assembly and linking)
+  char* cnasm = "nasm -felf64 %s";
+  char* nasm = null_checker(malloc(strlen(ivy_file_asm) + strlen(cnasm)));
+  sprintf(nasm, cnasm, ivy_file_asm);
+  system(nasm);
+
+  char* clink = "ld -o %s %s";
+  char* link = null_checker(malloc(strlen(ivy_linked_file) + strlen(clink) + strlen(filename)));
+  sprintf(link, clink, filename, ivy_linked_file);
+  system(link);
+  char* rmoasm_files = "rm %s %s";
+  char* rm = null_checker(malloc(strlen(ivy_linked_file) + strlen(ivy_file_asm) + strlen(rmoasm_files)));
+  sprintf(rm, rmoasm_files, ivy_linked_file, ivy_file_asm);
+  system(rm);
+  
+  // get the value of yield in the ivy source file
+  free(asm_code);
+  free(ivy_file_asm);
+  free(ivy_linked_file);
   free(file_contents);
+  free(nasm);
+  free(link);
+  free(rm);
   return (0);
-}
-
-/**
- * usage - return usage message to the stdout
- * @level: char used to determine the message to print out
- * Returns: nada
- */
-void usage(char level) {
-  switch (level) {
-      case 's':
-	printf("Usage:\n");
-	printf("\t datura <input.dt>");
-	break;
-
-      case 'f':
-	printf("No input files specified\n");
-	printf("Compilation terminated\n");
-	printf("Usage: datura <input.dt>\n");
-	break;
-
-      case 'i':
-	printf("Invalid filename\n");
-	printf("datura only works with files ending in .dt\n");
-	break;
-    
-      default:
-	printf("Invalid use. Compilation terminated.\n");
-    }
-}
-
-/**
- * sanity_checks - checks file extensions and compatibility
- * @argc - argument count from the main function
- * @argv - pointer to the array containing the arguments supplied
- * Returns: an integer value representing the error/success  given
- */
-int sanity_checks(int argc, char** argv) {
-  if (argc < 2) {
-    usage('f');
-    exit(1);
-  }
-  else if (argc > 2) {
-    usage('a'); /* goes straight to default. no support for flags still*/
-    exit(2);
-  }
-
-  // printf("%s\n", argv[1]);
-  /* check whether the file ends in .dt */
-  if (strchr(argv[1], '.') != NULL) {
-    char* file_ext = strchr(argv[1], '.');
-      
-    if (strcmp(file_ext, ".dt") != 0) {
-      usage('i');
-      exit(4);
-    }
-  }
 }
