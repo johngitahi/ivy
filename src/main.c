@@ -16,7 +16,7 @@ int main(int argc, char* argv[]) {
   char* file_contents = read_file(argv[1]);
 
   // assmebly template
-  static char* asm_template =
+  char* asm_template =
     "section .text\n"
     "\tglobal _start\t; program entry point\n\n"
     "_start:\n"
