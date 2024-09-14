@@ -1,12 +1,3 @@
 # Ivy
-An attempt to understand how a computer compiler works.
+i have decided to tear everything down and start again. whatever i was writing was complete garbage, this is an insight after almost completing the first half of jlox interpreter.
 
-just `make ivy` to build and try it against the code in examples dir.
-
-currently does not work well. no lexer, parser, scanner, so ...
-
-
-## Requires
-- nasm (assembly)
-- ld (linking)
-- make (build)
